@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GAEF მოდელი</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: #F4F6FA;
+    color: #1A1F2E;
+    line-height: 1.6;
+    padding: 32px 16px 60px;
+  }
+  .container { max-width: 1120px; margin: 0 auto; }
+
+  .hero {
+    background: linear-gradient(135deg, #1F3864 0%, #2E4A7A 60%, #4472C4 100%);
+    color: white;
+    padding: 48px 40px 40px;
+    text-align: center;
+    border-radius: 16px;
+    margin-bottom: 28px;
+  }
+  .hero-abbr { font-size: 52px; font-weight: 700; letter-spacing: -1px; margin-bottom: 6px; }
+  .hero-full  { font-size: 17px; font-weight: 600; opacity: .9; margin-bottom: 8px; }
+  .hero-sub   { font-size: 13px; opacity: .65; font-style: italic; max-width: 600px; margin: 0 auto 28px; }
+  .pills { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+  .pill { padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+  .pill-green { background: rgba(76,175,80,.25);  color: #C8F0CA; border: 1px solid rgba(76,175,80,.4); }
+  .pill-amber { background: rgba(255,167,38,.2);  color: #FFE0A3; border: 1px solid rgba(255,167,38,.4); }
+  .pill-red   { background: rgba(239,83,80,.2);   color: #FFCDD2; border: 1px solid rgba(239,83,80,.4); }
+
+  .intro {
+    background: white; border-radius: 12px; padding: 20px 26px;
+    margin-bottom: 24px; border-left: 4px solid #4472C4;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    font-size: 14px; color: #333; line-height: 1.7;
+  }
+  .intro strong { color: #1F3864; }
+
+  .flow {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; margin-bottom: 28px; flex-wrap: wrap;
+  }
+  .flow-box {
+    background: white; border: 1.5px solid #DEE4F0; border-radius: 10px;
+    padding: 12px 20px; text-align: center; min-width: 140px;
+  }
+  .flow-num   { font-size: 10px; font-weight: 600; color: #4472C4; text-transform: uppercase; letter-spacing: .06em; }
+  .flow-label { font-size: 13px; font-weight: 500; color: #1F3864; margin-top: 2px; }
+  .flow-arrow { font-size: 22px; color: #4472C4; padding: 0 8px; }
+
+  .table-wrap { overflow-x: auto; margin-bottom: 16px; }
+
+  table {
+    width: 100%; border-collapse: collapse;
+    background: white; border-radius: 14px;
+    overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,.08);
+  }
+  thead th {
+    background: #1F3864; color: white;
+    padding: 14px 16px; font-weight: 600;
+    font-size: 13px; text-align: left;
+  }
+  thead th:first-child { width: 44px; text-align: center; }
+
+  tr.sec td {
+    background: #2E4A7A; color: white;
+    font-weight: 600; font-size: 12px;
+    letter-spacing: .05em; text-transform: uppercase;
+    padding: 9px 16px;
+  }
+  tbody tr:not(.sec) { border-bottom: 1px solid #EDF0F7; }
+  tbody tr:not(.sec):last-child { border-bottom: none; }
+  tbody tr:not(.sec):hover { filter: brightness(.97); }
+
+  td { padding: 14px 16px; vertical-align: top; font-size: 13.5px; line-height: 1.65; color: #222; }
+  td:first-child {
+    text-align: center; font-weight: 700; font-size: 16px;
+    border-left: 5px solid transparent; padding: 14px 10px;
+  }
+
+  tr.green td              { background: #FAFFF8; }
+  tr.green td:first-child  { border-left-color: #43A047; background: #F1FAF1; color: #2E7D32; }
+  tr.amber td              { background: #FFFDF5; }
+  tr.amber td:first-child  { border-left-color: #FB8C00; background: #FFF8ED; color: #E65100; }
+  tr.red   td              { background: #FFF9F9; }
+  tr.red   td:first-child  { border-left-color: #E53935; background: #FFF5F5; color: #C62828; }
+
+  .stage-name { font-weight: 600; color: #1F3864; margin-bottom: 5px; font-size: 13.5px; }
+  .lbl { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #888; margin-bottom: 4px; }
+  .txt { font-size: 13px; color: #333; line-height: 1.65; }
+
+  .legend {
+    display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px;
+  }
+  .leg {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 12px; color: #555; background: white;
+    padding: 6px 14px; border-radius: 20px; border: 1px solid #DEE4F0;
+  }
+  .leg-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+  @media (max-width: 700px) {
+    .hero { padding: 32px 20px; }
+    .hero-abbr { font-size: 38px; }
+    td, thead th { padding: 10px 10px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="hero">
+    <div class="hero-abbr">GAEF</div>
+    <div class="hero-full">Gen AI-Assisted Elicitation Framework</div>
+    <div class="hero-sub">გენერაციული ხელოვნური ინტელექტის მხარდაჭერით მოთხოვნების გამოვლენისა და დაინტერესებულ მხარეებთან მედიაციის კონცეპტუალური ჩარჩო</div>
+    <div class="pills">
+      <span class="pill pill-green">● AI ეფექტურია — ადოფცია 67-78%</span>
+      <span class="pill pill-amber">● AI ნაწილობრივ — ადოფცია 33-56%</span>
+      <span class="pill pill-red">● ადამიანი წამყვანია — ადოფცია 0-33%</span>
+    </div>
+  </div>
+
+  <div class="intro">
+    GAEF მოდელის ძირეული პოზიცია: <strong>ხელოვნური ინტელექტი (AI) არ ანაცვლებს ბიზნეს-ანალიტიკოსს, არამედ ასრულებს დამხმარის (ასისტენტის) ფუნქციას.</strong> AI მაღალ ეფექტიანობას ავლენს სტრუქტურირებულ, განმეორებად ამოცანებში, მაშინ როდესაც სოციალურ ინტერაქციასა და ორმხრივ ნდობაზე დაფუძნებულ ფაზებს უშუალოდ ადამიანი ხელმძღვანელობს. მოდელი ეყრდნობა სამეცნიერო ლიტერატურასა და 9 ბიზნეს-ანალიტიკოსის ემპირიულ კვლევას საქართველოს IT სექტორიდან.
+  </div>
+
+  <div class="flow">
+    <div class="flow-box"><div class="flow-num">შრე 1</div><div class="flow-label">ეტაპის განსაზღვრა</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><div class="flow-num">შრე 2</div><div class="flow-label">Gen AI ფუნქცია</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><div class="flow-num">შრე 3</div><div class="flow-label">ადამიანის კონტროლი</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-box"><div class="flow-num">შრე 4</div><div class="flow-label">მოსალოდნელი შედეგი</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>N</th>
+          <th>პროცესის ეტაპი</th>
+          <th>Gen AI-ს გამოყენება</th>
+          <th>ადამიანის კონტროლი</th>
+          <th>პრაქტიკული შედეგი</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr class="sec"><td colspan="5">ნაწილი I — მოთხოვნების გამოვლენა</td></tr>
+
+        <tr class="green">
+          <td>1</td>
+          <td><div class="stage-name">კონტექსტის გააზრება და დოკუმენტაციის ანალიზი</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">დოკუმენტაციის შეჯამება, ძირითადი ტერმინებისა და თემების გამოყოფა, პროცესის აღწერის გამარტივება</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">ბიზნეს-ანალიტიკოსის მიერ შინაარსის გადამოწმება და ბიზნეს კონტექსტთან შესაბამისობის დადასტურება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">კონტექსტის სწრაფი გააზრება, ანალიზისთვის დროის შემცირება</div>
+          </td>
+        </tr>
+
+        <tr class="amber">
+          <td>2</td>
+          <td><div class="stage-name">დაინტერესებულ მხარეთა იდენტიფიკაცია და პრიორიტეტიზაცია</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">დაინტერესებული მხარეების როლებისა და გავლენის ანალიზის მხარდაჭერა და ჩართულობის პრიორიტეტების ოპტიმიზაცია</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">ბიზნეს-ანალიტიკოსის მიერ საბოლოო შეფასება და დადასტურება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">დაინტერესებულ მხარეთა სრული იდენტიფიცირება და პროცესში რელევანტური პირების ჩართულობის უზრუნველყოფა</div>
+          </td>
+        </tr>
+
+        <tr class="green">
+          <td>3</td>
+          <td><div class="stage-name">გამოვლენის სტრატეგიის დაგეგმვა და კითხვების მომზადება</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">კითხვების გენერაცია, ინტერვიუს სტრუქტურის მომზადება, თემების ჩამონათვალის შედგენა</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">კითხვების რელევანტურობისა და კონტექსტთან შესაბამისობის გადამოწმება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">უკეთ მომზადებული ინტერვიუ და ნაკლები გამოტოვებული საკითხი</div>
+          </td>
+        </tr>
+
+        <tr class="amber">
+          <td>4</td>
+          <td><div class="stage-name">ინტერვიუს ჩატარება და ინფორმაციის შეგროვება</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">ჩანაწერების სტრუქტურირება, შეხვედრის შეჯამება, დამატებითი კითხვების შეთავაზება</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">ბიზნეს-ანალიტიკოსის მიერ ინფორმაციის სიზუსტისა და კონფიდენციალურობის კონტროლი</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">ინფორმაციის დანაკარგების მინიმიზაცია და მონაცემთა დამუშავების დროის ოპტიმიზაცია</div>
+          </td>
+        </tr>
+
+        <tr class="green">
+          <td>5</td>
+          <td><div class="stage-name">მოთხოვნების კლასიფიკაცია</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">მოთხოვნების სტრუქტურირება ტიპების მიხედვით, მათი კლასიფიკაცია და დუბლირებადი ელემენტების გაერთიანება</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">კლასიფიკაციის სისწორის გადამოწმება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">უკეთ ორგანიზებული და გასაგები მოთხოვნები</div>
+          </td>
+        </tr>
+
+        <tr class="amber">
+          <td>6</td>
+          <td><div class="stage-name">ბუნდოვანი მოთხოვნების გამოვლენა</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">ინფორმაციული ბუნდოვანების იდენტიფიცირება, ლოგიკური წინააღმდეგობების გამოვლენა და დამატებითი კითხვების ფორმულირება</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">მოთხოვნების ფინალური ვერიფიკაცია ბიზნეს-ანალიტიკოსისა და დაინტერესებული მხარეების მიერ</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">ინფორმაციული გაუგებრობების პრევენცია, რაც პირდაპირ აისახება საბოლოო მოთხოვნების სიზუსტესა და ხარისხზე</div>
+          </td>
+        </tr>
+
+        <tr class="green">
+          <td>7</td>
+          <td><div class="stage-name">მომხმარებლის ისტორიებისა და გამოყენების სცენარების შედგენა</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">მომხმარებლის ისტორიების მონახაზის შექმნა, გამოყენების სცენარების ფორმირება</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">ბიზნეს-ანალიტიკოსის მიერ შინაარსობრივი დახვეწა და გადამოწმება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">დოკუმენტირების პროცესის ოპტიმიზაცია და მოთხოვნების სტანდარტიზებული ფორმულირება</div>
+          </td>
+        </tr>
+
+        <tr class="red">
+          <td>8</td>
+          <td><div class="stage-name">მოთხოვნების პრიორიტეტიზაცია</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">მოთხოვნების გავლენის ხარისხის, მათი პრიორიტეტულობისა და სტრუქტურული დამოკიდებულებების ანალიზი</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">დაინტერესებულ მხარეებსა და ბიზნეს-ანალიტიკოსს შორის კონსენსუსის მიღწევა და საბოლოო გადაწყვეტილების ვერიფიკაცია</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">გადაწყვეტილების მიღების პროცესის მხარდაჭერა და რესურსების ოპტიმალური გადანაწილება</div>
+          </td>
+        </tr>
+
+        <tr class="sec"><td colspan="5">ნაწილი II — დაინტერესებულ მხარეებთან მედიაცია</td></tr>
+
+        <tr class="red">
+          <td>9</td>
+          <td><div class="stage-name">კონფლიქტური ინტერესების გამოვლენა</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">წინააღმდეგობრივი მოსაზრებების შედარება, ძირითადი უთანხმოების გამოვლენა</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">მედიატორის ან ბიზნეს-ანალიტიკოსის მიერ შეფასება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">კონფლიქტების ადრეული იდენტიფიკაცია</div>
+          </td>
+        </tr>
+
+        <tr class="green">
+          <td>10</td>
+          <td><div class="stage-name">ტექნიკური და ბიზნეს ენის თარგმნა</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">ტექნიკური ტერმინოლოგიის გამარტივება და ბიზნესსა და ტექნიკურ დომენებს შორის კომუნიკაციის ტრანსლაცია</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">დარგობრივი ცოდნის მქონე პირის მიერ გადამოწმება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">უკეთესი კომუნიკაცია და ურთიერთგაგება</div>
+          </td>
+        </tr>
+
+        <tr class="amber">
+          <td>11</td>
+          <td><div class="stage-name">უკუკავშირის სინთეზი</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">უკუკავშირის შეჯამება და იდენტური შინაარსის მქონე საკითხების გამოყოფა</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">ბიზნეს-ანალიტიკოსის მიერ შინაარსის გადამოწმება</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">ინფორმაციის უკეთ სტრუქტურირება და ნაკლები ინფორმაციული გადატვირთვა</div>
+          </td>
+        </tr>
+
+        <tr class="red">
+          <td>12</td>
+          <td><div class="stage-name">კომპრომისი და საბოლოო შეთანხმება</div></td>
+          <td>
+            <div class="lbl">AI-ს ფუნქცია</div>
+            <div class="txt">შეთანხმების შესაძლო ვარიანტების შეთავაზება, შეთანხმებული საკითხების შეჯამება</div>
+          </td>
+          <td>
+            <div class="lbl">ადამიანი ამოწმებს</div>
+            <div class="txt">საბოლოო გადაწყვეტილების მიღება დაინტერესებული მხარეების მიერ</div>
+          </td>
+          <td>
+            <div class="lbl">პრაქტიკული შედეგი</div>
+            <div class="txt">შეთანხმების პროცესის გამარტივება და საერთო პოზიციის ჩამოყალიბება</div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#43A047"></div>AI ეფექტურია — ადოფცია 67-78%</div>
+    <div class="leg"><div class="leg-dot" style="background:#FB8C00"></div>AI ნაწილობრივ — ადოფცია 33-56%</div>
+    <div class="leg"><div class="leg-dot" style="background:#E53935"></div>ადამიანი წამყვანია — ადოფცია 0-33%</div>
+  </div>
+
+</div>
+</body>
+</html>
